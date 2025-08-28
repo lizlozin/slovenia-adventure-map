@@ -95,11 +95,24 @@
       }
 
       .location {
-        display: flex;
-        align-items: center;
         margin-bottom: 8px;
         font-size: 13px;
         color: #495057;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+      }
+
+      .location-header {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
+      }
+
+      .location-header:hover {
+        background-color: #f8f9fa;
       }
 
       .location-icon {
@@ -108,6 +121,87 @@
         border-radius: 50%;
         margin-right: 10px;
         flex-shrink: 0;
+      }
+
+      .location-main {
+        flex: 1;
+      }
+
+      .location-expand-btn {
+        background: none;
+        border: none;
+        color: #6c757d;
+        font-size: 12px;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        margin-left: 8px;
+      }
+
+      .location-expand-btn:hover {
+        background-color: #e9ecef;
+        color: #495057;
+      }
+
+      .location-details {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        background-color: #f8f9fa;
+        margin: 4px 0 0 0;
+        border-radius: 0 0 8px 8px;
+      }
+
+      .location-details.expanded {
+        max-height: 300px;
+      }
+
+      .location-details-content {
+        padding: 12px 16px;
+        border-top: 1px solid #e9ecef;
+      }
+
+      .detail-item {
+        margin-bottom: 8px;
+        font-size: 12px;
+        line-height: 1.4;
+      }
+
+      .detail-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 2px;
+      }
+
+      .detail-value {
+        color: #6c757d;
+      }
+
+      .time-badge {
+        display: inline-block;
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+
+      .tip-icon {
+        color: #ffc107;
+        margin-right: 4px;
+      }
+
+      .parking-icon {
+        color: #17a2b8;
+        margin-right: 4px;
+      }
+
+      .cash-icon {
+        color: #28a745;
+        margin-right: 4px;
       }
 
       .hotel {
@@ -190,31 +284,35 @@
       }
 
       .google-maps-btn {
-        background: #4285f4;
-        color: white;
-        border: none;
+        background: #ffffff;
+        color: #1976d2;
+        border: 2px solid #1976d2;
         padding: 6px 12px;
         border-radius: 4px;
         font-size: 11px;
-        font-weight: 500;
+        font-weight: 600;
         cursor: pointer;
         margin-top: 8px;
         display: inline-flex;
         align-items: center;
         gap: 4px;
         text-decoration: none;
-        transition: background-color 0.2s ease;
+        transition: all 0.2s ease;
         min-height: 28px;
       }
 
       .google-maps-btn:hover {
-        background: #3367d6;
-        text-decoration: none;
+        background: #1976d2;
         color: white;
+        text-decoration: none;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(25, 118, 210, 0.3);
       }
 
       .google-maps-btn:active {
-        background: #2851a3;
+        background: #1565c0;
+        color: white;
+        transform: translateY(0);
       }
 
       .google-maps-icon {
@@ -364,10 +462,33 @@
           margin-bottom: 6px;
         }
 
+        .location-header {
+          padding: 6px;
+        }
+
         .location-icon {
           width: 14px;
           height: 14px;
           margin-right: 8px;
+        }
+
+        .location-expand-btn {
+          font-size: 11px;
+          padding: 3px;
+        }
+
+        .location-details-content {
+          padding: 10px 12px;
+        }
+
+        .detail-item {
+          margin-bottom: 6px;
+          font-size: 11px;
+        }
+
+        .time-badge {
+          font-size: 10px;
+          padding: 1px 6px;
         }
 
         .hotel {
@@ -594,24 +715,44 @@
               lat: 45.7429,
               lng: 16.0688,
               activities: ["Arrive ~12 pm"],
+              timeNeeded: "30 min",
+              touristTips:
+                "Free WiFi available. Currency exchange at arrivals. Car rental desks on ground floor.",
+              parking: "Short-term parking: €2/hour, Long-term: €8/day",
+              cashNeeded: "No - cards accepted everywhere",
             },
             {
               name: "Lotrščak Tower",
               lat: 45.815,
               lng: 15.9819,
               activities: ["Sightseeing"],
+              timeNeeded: "45 min",
+              touristTips:
+                "Cannon fires daily at noon. Great views of Zagreb. Climb 13th-century tower.",
+              parking: "Limited street parking nearby - use public transport",
+              cashNeeded: "Entry: €3 (cash preferred)",
             },
             {
               name: "Tkalčićeva Street",
               lat: 45.8144,
               lng: 15.9798,
               activities: ["Café visit"],
+              timeNeeded: "1-2 hours",
+              touristTips:
+                "Pedestrian street with cafés and restaurants. Try local coffee culture.",
+              parking: "No parking - pedestrian zone",
+              cashNeeded: "Cards accepted, but small tips in cash appreciated",
             },
             {
               name: "Plitvice Lakes",
               lat: 44.8654,
               lng: 15.582,
               activities: ["Drive (~2.5 hrs)"],
+              timeNeeded: "2.5 hours drive",
+              touristTips:
+                "Scenic route through Croatian countryside. Stop for snacks in Karlovac.",
+              parking: "Hotel parking available",
+              cashNeeded: "Tolls: €5-8 (cash or card)",
             },
           ],
           hotel: "Villa Mukinja, Plitvice",
@@ -626,12 +767,22 @@
               lat: 44.8654,
               lng: 15.582,
               activities: ["Hiking trail"],
+              timeNeeded: "4-6 hours",
+              touristTips:
+                "Start early (8am) to avoid crowds. Wear comfortable hiking shoes. Bring water and snacks.",
+              parking: "Park entrance: €8/day. Arrive early for spots.",
+              cashNeeded: "Entry: €40 (peak season) - cards accepted",
             },
             {
               name: "Lake Bled",
               lat: 46.3683,
               lng: 14.094,
               activities: ["Drive to Bled"],
+              timeNeeded: "3.5 hours drive",
+              touristTips:
+                "Scenic drive through Slovenia. Stop in Ljubljana for lunch if time permits.",
+              parking: "Hotel parking available",
+              cashNeeded: "Tolls: €3-5 (cash or card)",
             },
           ],
           hotel: "Hotel Hom at Vintgar",
@@ -646,24 +797,44 @@
               lat: 46.3647,
               lng: 14.0758,
               activities: ["Hike (45 min total)"],
+              timeNeeded: "45 min",
+              touristTips:
+                "Best sunrise/sunset views of Lake Bled. Steep but short hike. Bring camera!",
+              parking: "Small parking area - arrive early",
+              cashNeeded: "Free",
             },
             {
               name: "Bled Island",
               lat: 46.3677,
               lng: 14.1028,
               activities: ["Island & church visit"],
+              timeNeeded: "1.5 hours",
+              touristTips:
+                "Traditional pletna boat ride. Ring church bell for good luck. Book boat in advance.",
+              parking: "Use lakeside parking areas",
+              cashNeeded: "Pletna boat: €18/person (cash preferred)",
             },
             {
               name: "Bled Castle",
               lat: 46.3717,
               lng: 14.099,
               activities: ["Castle visit"],
+              timeNeeded: "1-2 hours",
+              touristTips:
+                "Medieval castle with museum. Try castle wine. Great views over lake.",
+              parking: "Castle parking: €2/hour",
+              cashNeeded: "Entry: €13 (cards accepted)",
             },
             {
               name: "Vintgar Gorge",
               lat: 46.3833,
               lng: 14.0833,
               activities: ["Loop hike (~1.5 hrs)"],
+              timeNeeded: "1.5 hours",
+              touristTips:
+                "Wooden walkways over emerald river. Can get crowded - go early or late.",
+              parking: "Gorge parking: €5/day",
+              cashNeeded: "Entry: €10 (cash or card)",
             },
           ],
           hotel: "Hotel Hom at Vintgar",
@@ -678,24 +849,44 @@
               lat: 46.2833,
               lng: 13.85,
               activities: ["Hike (~2 hrs)"],
+              timeNeeded: "2 hours",
+              touristTips:
+                "Beautiful gorge with natural pools. Less crowded than Vintgar. Wear good shoes.",
+              parking: "Free parking at trailhead",
+              cashNeeded: "Free",
             },
             {
               name: "Lake Bohinj",
               lat: 46.2833,
               lng: 13.8333,
               activities: ["Swimming"],
+              timeNeeded: "2-3 hours",
+              touristTips:
+                "Larger, quieter lake than Bled. Swimming allowed. Rent kayaks or SUP boards.",
+              parking: "Lakeside parking: €1.50/hour",
+              cashNeeded: "Parking coins needed, activities cash/card",
             },
             {
               name: "Savica Waterfall",
               lat: 46.3,
               lng: 13.8167,
               activities: ["Hike (45 min)"],
+              timeNeeded: "45 min",
+              touristTips:
+                "78m waterfall, source of Sava River. Uphill hike but worth it. Bring water.",
+              parking: "Parking: €3/day",
+              cashNeeded: "Entry: €4 (cash preferred)",
             },
             {
               name: "Vogel Cable Car",
               lat: 46.2667,
               lng: 13.8333,
               activities: ["Julian Alps panorama (~1.5–2 hrs)"],
+              timeNeeded: "2 hours",
+              touristTips:
+                "Stunning 360° mountain views. Check weather conditions. Restaurant at top.",
+              parking: "Cable car parking: €3/day",
+              cashNeeded: "Cable car: €22 return (cards accepted)",
             },
           ],
           hotel: "Rustic House 13 Studor v Bohinju",
@@ -710,24 +901,44 @@
               lat: 46.3167,
               lng: 13.85,
               activities: ["Trailhead"],
+              timeNeeded: "30 min",
+              touristTips:
+                "Starting point for Seven Lakes hike. Check weather conditions. Bring mountain gear.",
+              parking: "Free parking at trailhead",
+              cashNeeded: "Free",
             },
             {
               name: "Planina pri Jezeru",
               lat: 46.3,
               lng: 13.8667,
               activities: ["Hiking waypoint"],
+              timeNeeded: "2 hours hike",
+              touristTips:
+                "Beautiful alpine meadow. Good rest stop. Fill water bottles at mountain springs.",
+              parking: "N/A - hiking trail",
+              cashNeeded: "Free",
             },
             {
               name: "Koča pri Triglavskih jezerih",
               lat: 46.3333,
               lng: 13.8833,
               activities: ["Lunch, overnight in hut"],
+              timeNeeded: "Overnight",
+              touristTips:
+                "Mountain hut with basic accommodation. Book in advance. Bring sleeping bag liner.",
+              parking: "N/A - hiking trail",
+              cashNeeded: "Hut fee: €25-35/night + meals (cash only)",
             },
             {
               name: "Hribarice Plateau",
               lat: 46.34,
               lng: 13.89,
               activities: ["Optional hike"],
+              timeNeeded: "1 hour",
+              touristTips:
+                "Optional side trip for views. Weather dependent. Return to hut before dark.",
+              parking: "N/A - hiking trail",
+              cashNeeded: "Free",
             },
           ],
           hotel: "Koča pri Triglavskih jezerih (Mountain Hut)",
@@ -742,36 +953,66 @@
               lat: 46.35,
               lng: 13.9,
               activities: ["Hiking waypoint"],
+              timeNeeded: "1.5 hours hike",
+              touristTips:
+                "High mountain pass. Can be windy and cold. Layer clothing appropriately.",
+              parking: "N/A - hiking trail",
+              cashNeeded: "Free",
             },
             {
               name: "Black Lake",
               lat: 46.36,
               lng: 13.91,
               activities: ["Seven Lakes trail"],
+              timeNeeded: "2 hours",
+              touristTips:
+                "Largest of the seven lakes. Great photo opportunities. Swimming possible but cold!",
+              parking: "N/A - hiking trail",
+              cashNeeded: "Free",
             },
             {
               name: "Planina Viševnik",
               lat: 46.37,
               lng: 13.92,
               activities: ["Hiking waypoint"],
+              timeNeeded: "1 hour",
+              touristTips:
+                "Final descent point. Check trail conditions. Steep sections require care.",
+              parking: "N/A - hiking trail",
+              cashNeeded: "Free",
             },
             {
               name: "Vršič Pass",
               lat: 46.4333,
               lng: 13.75,
               activities: ["Drive (~2 hrs)", "Summit viewpoint"],
+              timeNeeded: "1 hour + drive",
+              touristTips:
+                "Highest mountain pass in Slovenia. 50 hairpin turns. Stop at viewpoints.",
+              parking: "Free roadside parking",
+              cashNeeded: "Free",
             },
             {
               name: "Lake Jasna",
               lat: 46.4833,
               lng: 13.7333,
               activities: ["Scenic stop"],
+              timeNeeded: "30 min",
+              touristTips:
+                "Artificial lake with mountain reflections. Popular photo spot. Short walk around lake.",
+              parking: "Free parking area",
+              cashNeeded: "Free",
             },
             {
               name: "Russian Chapel",
               lat: 46.4167,
               lng: 13.7667,
               activities: ["Historical site"],
+              timeNeeded: "20 min",
+              touristTips:
+                "Memorial to Russian POWs who died building the road. Small but moving historical site.",
+              parking: "Roadside parking",
+              cashNeeded: "Free",
             },
           ],
           hotel: "Vivo Bovec",
@@ -786,36 +1027,66 @@
               lat: 46.3383,
               lng: 13.5536,
               activities: ["Rafting (8:15 - 3 hrs)"],
+              timeNeeded: "3 hours",
+              touristTips:
+                "Emerald river rafting. Bring swimwear, towel. Waterproof camera recommended.",
+              parking: "Rafting company provides parking",
+              cashNeeded: "Rafting: €35-50 (book online, pay cash/card)",
             },
             {
               name: "Virje Waterfall",
               lat: 46.3167,
               lng: 13.5833,
               activities: ["Quick stop (10 min drive)"],
+              timeNeeded: "20 min",
+              touristTips:
+                "Easy access waterfall. Good for photos. Can get crowded in afternoon.",
+              parking: "Small parking area",
+              cashNeeded: "Free",
             },
             {
               name: "Great Soča Gorge",
               lat: 46.3,
               lng: 13.6,
               activities: ["30 min wander (15 min drive)"],
+              timeNeeded: "30 min",
+              touristTips:
+                "Dramatic gorge with turquoise water. Short walk from parking. Mind the edges!",
+              parking: "Free parking",
+              cashNeeded: "Free",
             },
             {
               name: "Boka Waterfall",
               lat: 46.2833,
               lng: 13.6167,
               activities: ["Optional stop (10 min drive)"],
+              timeNeeded: "30 min",
+              touristTips:
+                "Slovenia's highest waterfall (144m). Best viewed from distance. Short walk from road.",
+              parking: "Roadside parking",
+              cashNeeded: "Free",
             },
             {
               name: "Kozjak Waterfall",
               lat: 46.25,
               lng: 13.65,
               activities: ["1–1.5 hr hike (25 min drive)"],
+              timeNeeded: "1.5 hours",
+              touristTips:
+                "Hidden waterfall in cave-like setting. Moderate hike through forest. Bring flashlight.",
+              parking: "Free parking at trailhead",
+              cashNeeded: "Free",
             },
             {
               name: "Napoleon Bridge",
               lat: 46.3383,
               lng: 13.5536,
               activities: ["Quick stop in town"],
+              timeNeeded: "15 min",
+              touristTips:
+                "Historic stone bridge over Soča River. Good for photos. In Bovec town center.",
+              parking: "Town parking available",
+              cashNeeded: "Free",
             },
           ],
           hotel: "Odisej House Tolmin",
@@ -830,24 +1101,44 @@
               lat: 46.1833,
               lng: 13.7333,
               activities: ["Morning hike (1–1.5 hrs)"],
+              timeNeeded: "1.5 hours",
+              touristTips:
+                "Deepest gorge in Slovenia. Wooden walkways and bridges. Start early to avoid crowds.",
+              parking: "Parking: €3/day",
+              cashNeeded: "Entry: €6 (cash or card)",
             },
             {
               name: "Postojna Cave",
               lat: 45.7833,
               lng: 14.2,
               activities: ["Cave tour (1.5–2 hrs)"],
+              timeNeeded: "2 hours",
+              touristTips:
+                "Famous cave system with train ride. Book online in advance. Bring jacket (9°C inside).",
+              parking: "Free parking at visitor center",
+              cashNeeded: "Entry: €29 (online booking recommended)",
             },
             {
               name: "Predjama Castle",
               lat: 45.8147,
               lng: 14.1275,
               activities: ["Castle visit (1–1.5 hrs)"],
+              timeNeeded: "1.5 hours",
+              touristTips:
+                "Castle built into cliff face. Combine ticket with Postojna Cave available. Audio guide included.",
+              parking: "Free parking",
+              cashNeeded: "Entry: €16 or combo ticket €37 (cards accepted)",
             },
             {
               name: "Ljubljana",
               lat: 46.0569,
               lng: 14.5058,
               activities: ["Arrive in capital"],
+              timeNeeded: "1 hour drive",
+              touristTips:
+                "Slovenia's charming capital. Park outside center and walk. Evening stroll recommended.",
+              parking: "Hotel parking or public garages €1-2/hour",
+              cashNeeded: "Parking meters require coins",
             },
           ],
           hotel: "Four Points by Sheraton Ljubljana Mons",
@@ -862,6 +1153,11 @@
               lat: 46.0569,
               lng: 14.5058,
               activities: ["Meet Tanja's family"],
+              timeNeeded: "Full day",
+              touristTips:
+                "Relaxed family day. Explore local recommendations. Try traditional Slovenian cuisine.",
+              parking: "Hotel parking or city center garages",
+              cashNeeded: "Restaurants accept cards, small tips in cash",
             },
           ],
           hotel: "Four Points by Sheraton Ljubljana Mons",
@@ -876,30 +1172,55 @@
               lat: 46.0492,
               lng: 14.5073,
               activities: ["Castle & funicular"],
+              timeNeeded: "2 hours",
+              touristTips:
+                "Take funicular up, walk down. Great city views. Museum and exhibitions inside.",
+              parking: "Use city center parking, walk to funicular",
+              cashNeeded: "Castle + funicular: €13 (cards accepted)",
             },
             {
               name: "Central Market",
               lat: 46.0514,
               lng: 14.5061,
               activities: ["Market visit"],
+              timeNeeded: "1 hour",
+              touristTips:
+                "Open Mon-Sat. Fresh produce, local crafts. Try local honey and cheese.",
+              parking: "Nearby parking garages",
+              cashNeeded: "Small purchases - cash preferred",
             },
             {
               name: "Tivoli Park",
               lat: 46.0556,
               lng: 14.4931,
               activities: ["Park walk"],
+              timeNeeded: "1-2 hours",
+              touristTips:
+                "Largest park in Ljubljana. Great for jogging or relaxing. Visit Tivoli Mansion.",
+              parking: "Park entrances have nearby parking",
+              cashNeeded: "Free",
             },
             {
               name: "Prešeren Square",
               lat: 46.0514,
               lng: 14.5047,
               activities: ["City center"],
+              timeNeeded: "30 min",
+              touristTips:
+                "Main square with pink church. Street performers often present. Café culture.",
+              parking: "Underground parking available",
+              cashNeeded: "Free to visit, cafés accept cards",
             },
             {
               name: "Dragon Bridge",
               lat: 46.0522,
               lng: 14.5089,
               activities: ["Iconic bridge"],
+              timeNeeded: "15 min",
+              touristTips:
+                "Art Nouveau bridge with dragon statues. Symbol of Ljubljana. Great for photos.",
+              parking: "Walk from city center",
+              cashNeeded: "Free",
             },
           ],
           hotel: "Four Points by Sheraton Ljubljana Mons",
@@ -914,12 +1235,22 @@
               lat: 45.6667,
               lng: 14.0,
               activities: ["Cave tour (2 hrs)"],
+              timeNeeded: "2.5 hours",
+              touristTips:
+                "UNESCO World Heritage site. Underground canyon. Book online. Bring warm clothes.",
+              parking: "Free parking at visitor center",
+              cashNeeded: "Entry: €25 (online booking recommended)",
             },
             {
               name: "Krk",
               lat: 45.0278,
               lng: 14.5722,
               activities: ["Drive to Croatian island resort"],
+              timeNeeded: "3 hours drive",
+              touristTips:
+                "Cross into Croatia - passport needed. Krk Bridge toll. Island connected by bridge.",
+              parking: "Resort parking included",
+              cashNeeded: "Bridge toll: €5, Croatian kuna or euros accepted",
             },
           ],
           hotel: "Blue Waves Resort, Krk",
@@ -934,6 +1265,11 @@
               lat: 45.0278,
               lng: 14.5722,
               activities: ["Resort time", "Beach relaxation"],
+              timeNeeded: "Full day",
+              touristTips:
+                "All-inclusive resort. Private beach access. Water sports available. Spa treatments.",
+              parking: "Resort parking included",
+              cashNeeded: "Resort is all-inclusive, tips in cash appreciated",
             },
           ],
           hotel: "Blue Waves Resort, Krk",
@@ -948,6 +1284,11 @@
               lat: 45.7429,
               lng: 16.0688,
               activities: ["Early drive", "Return car & check in"],
+              timeNeeded: "3 hours drive + airport time",
+              touristTips:
+                "Leave early for 3-hour drive. Return rental car. Check-in 2 hours before flight.",
+              parking: "Rental car return area",
+              cashNeeded: "Tolls: €8-12, airport food/shopping accepts cards",
             },
           ],
           hotel: "Flight home",
@@ -983,6 +1324,29 @@
         });
       }
 
+      // Function to toggle location details
+      function toggleLocationDetails(dayIndex, locationIndex) {
+        const detailsId = `details-${dayIndex}-${locationIndex}`;
+        const btnId = `btn-${dayIndex}-${locationIndex}`;
+
+        const detailsElement = document.getElementById(detailsId);
+        const btnElement = document.getElementById(btnId);
+
+        if (detailsElement && btnElement) {
+          const isExpanded = detailsElement.classList.contains("expanded");
+
+          if (isExpanded) {
+            detailsElement.classList.remove("expanded");
+            btnElement.textContent = "▼";
+            btnElement.title = "Show details";
+          } else {
+            detailsElement.classList.add("expanded");
+            btnElement.textContent = "▲";
+            btnElement.title = "Hide details";
+          }
+        }
+      }
+
       // Create itinerary sidebar and map markers
       function createItinerary() {
         const itineraryContainer = document.getElementById("itinerary");
@@ -1005,17 +1369,48 @@
                     <div class="locations">
                         ${day.locations
                           .map(
-                            (loc) => `
-                            <div class="location" onclick="focusLocation(${
-                              loc.lat
-                            }, ${loc.lng}, '${
+                            (loc, locIndex) => `
+                            <div class="location">
+                                <div class="location-header" onclick="focusLocation(${
+                                  loc.lat
+                                }, ${loc.lng}, '${
                               loc.name
                             }'); event.stopPropagation();" style="cursor: pointer;">
-                                <div class="location-icon" style="background-color: ${color}"></div>
-                                <div>
-                                    <strong>${loc.name}</strong><br>
-                                    <small>${loc.activities.join(", ")}</small>
+                                    <div class="location-icon" style="background-color: ${color}"></div>
+                                    <div class="location-main">
+                                        <strong>${loc.name}</strong><br>
+                                        <small>${loc.activities.join(
+                                          ", "
+                                        )}</small>
+                                    </div>
+                                    ${
+                                      loc.timeNeeded
+                                        ? `<button class="location-expand-btn" id="btn-${index}-${locIndex}" onclick="toggleLocationDetails(${index}, ${locIndex}); event.stopPropagation();" title="Show details">▼</button>`
+                                        : ""
+                                    }
                                 </div>
+                                ${
+                                  loc.timeNeeded
+                                    ? `
+                                <div class="location-details" id="details-${index}-${locIndex}">
+                                    <div class="location-details-content">
+                                        <div class="time-badge">⏱️ ${loc.timeNeeded}</div>
+                                        <div class="detail-item">
+                                            <div class="detail-label"><span class="tip-icon">💡</span>Tourist Tips</div>
+                                            <div class="detail-value">${loc.touristTips}</div>
+                                        </div>
+                                        <div class="detail-item">
+                                            <div class="detail-label"><span class="parking-icon">🅿️</span>Parking</div>
+                                            <div class="detail-value">${loc.parking}</div>
+                                        </div>
+                                        <div class="detail-item">
+                                            <div class="detail-label"><span class="cash-icon">💰</span>Cash Needed</div>
+                                            <div class="detail-value">${loc.cashNeeded}</div>
+                                        </div>
+                                    </div>
+                                </div>`
+                                    : ""
+                                }
                             </div>
                         `
                           )
