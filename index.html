@@ -522,6 +522,24 @@
         "#74B9FF",
       ];
 
+      // Hotel locations data
+      const hotelLocations = {
+        "Villa Mukinja, Plitvice": { lat: 44.8654, lng: 15.582 },
+        "Hotel Hom at Vintgar": { lat: 46.3683, lng: 14.094 },
+        "Rustic House 13 Studor v Bohinju": { lat: 46.2833, lng: 13.8333 },
+        "Koča pri Triglavskih jezerih (Mountain Hut)": {
+          lat: 46.3333,
+          lng: 13.8833,
+        },
+        "Vivo Bovec": { lat: 46.3383, lng: 13.5536 },
+        "Odisej House Tolmin": { lat: 46.1833, lng: 13.7333 },
+        "Four Points by Sheraton Ljubljana Mons": {
+          lat: 46.0569,
+          lng: 14.5058,
+        },
+        "Blue Waves Resort, Krk": { lat: 45.0278, lng: 14.5722 },
+      };
+
       // Itinerary data (updated with correct Blue Waves Resort location in Krk)
       const itinerary = [
         {
@@ -903,8 +921,25 @@
       // Store markers and circles for each day
       const dayMarkers = {};
       const dayCircles = {};
+      const hotelMarkers = [];
       let allMarkers = [];
       let currentFocusedDay = null;
+
+      // Function to focus on a specific location
+      function focusLocation(lat, lng, locationName) {
+        map.setView([lat, lng], 14);
+
+        // Find and open popup for this location if it exists
+        allMarkers.forEach((marker) => {
+          const markerLatLng = marker.getLatLng();
+          if (
+            Math.abs(markerLatLng.lat - lat) < 0.001 &&
+            Math.abs(markerLatLng.lng - lng) < 0.001
+          ) {
+            marker.openPopup();
+          }
+        });
+      }
 
       // Create itinerary sidebar and map markers
       function createItinerary() {
@@ -929,7 +964,11 @@
                         ${day.locations
                           .map(
                             (loc) => `
-                            <div class="location">
+                            <div class="location" onclick="focusLocation(${
+                              loc.lat
+                            }, ${loc.lng}, '${
+                              loc.name
+                            }'); event.stopPropagation();" style="cursor: pointer;">
                                 <div class="location-icon" style="background-color: ${color}"></div>
                                 <div>
                                     <strong>${loc.name}</strong><br>
@@ -939,7 +978,13 @@
                         `
                           )
                           .join("")}
-                        <div class="hotel">🏨 ${day.hotel}</div>
+                        <div class="hotel" onclick="focusLocation(${
+                          hotelLocations[day.hotel]?.lat || 0
+                        }, ${hotelLocations[day.hotel]?.lng || 0}, '${
+            day.hotel
+          }'); event.stopPropagation();" style="cursor: pointer;">🏨 ${
+            day.hotel
+          }</div>
                     </div>
                 `;
 
@@ -1045,10 +1090,54 @@
           }
 
           dayMarkers[day.day] = dayMarkersList;
+
+          // Create hotel marker if hotel location exists
+          if (hotelLocations[day.hotel]) {
+            const hotelLoc = hotelLocations[day.hotel];
+
+            // Create custom house icon
+            const houseIcon = L.divIcon({
+              html: '<div style="background: white; border: 2px solid #333; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px;">🏠</div>',
+              className: "custom-house-icon",
+              iconSize: [24, 24],
+              iconAnchor: [12, 12],
+            });
+
+            const hotelMarker = L.marker([hotelLoc.lat, hotelLoc.lng], {
+              icon: houseIcon,
+              zIndexOffset: 1000, // Ensure hotels appear above other markers
+            }).addTo(map);
+
+            const hotelPopupContent = `
+              <div class="popup-content">
+                <div class="popup-title">🏨 ${day.hotel}</div>
+                <div class="popup-activities">Day ${day.day} accommodation</div>
+              </div>
+            `;
+
+            hotelMarker.bindPopup(hotelPopupContent, {
+              closeButton: true,
+              autoClose: false,
+              closeOnClick: false,
+              className: "custom-popup",
+            });
+
+            hotelMarker.on("mouseover", function (e) {
+              this.openPopup();
+            });
+
+            hotelMarker.on("click", function (e) {
+              this.openPopup();
+              e.originalEvent.stopPropagation();
+            });
+
+            hotelMarkers.push(hotelMarker);
+          }
         });
 
         // Final debug log
         console.log(`Total markers created: ${allMarkers.length}`);
+        console.log(`Total hotel markers created: ${hotelMarkers.length}`);
         console.log("All markers:", allMarkers);
       }
 
@@ -1076,6 +1165,9 @@
           circle.setStyle({ opacity: 0.2, fillOpacity: 0.05 })
         );
 
+        // Dim all hotel markers
+        hotelMarkers.forEach((marker) => marker.setOpacity(0.3));
+
         // Highlight only selected day markers and circle
         if (dayMarkers[dayNumber]) {
           dayMarkers[dayNumber].forEach((marker) =>
@@ -1084,6 +1176,21 @@
         }
         if (dayCircles[dayNumber]) {
           dayCircles[dayNumber].setStyle({ opacity: 0.8, fillOpacity: 0.2 });
+        }
+
+        // Highlight hotel marker for this day
+        const dayData = itinerary.find((d) => d.day === dayNumber);
+        if (dayData && hotelLocations[dayData.hotel]) {
+          const hotelLoc = hotelLocations[dayData.hotel];
+          hotelMarkers.forEach((marker) => {
+            const markerLatLng = marker.getLatLng();
+            if (
+              Math.abs(markerLatLng.lat - hotelLoc.lat) < 0.001 &&
+              Math.abs(markerLatLng.lng - hotelLoc.lng) < 0.001
+            ) {
+              marker.setOpacity(1);
+            }
+          });
         }
 
         // Fit map to day's locations
@@ -1111,6 +1218,9 @@
         Object.values(dayCircles).forEach((circle) =>
           circle.setStyle({ opacity: 0.6, fillOpacity: 0.1 })
         );
+
+        // Show all hotel markers at full opacity
+        hotelMarkers.forEach((marker) => marker.setOpacity(1));
 
         fitToBounds();
       }
