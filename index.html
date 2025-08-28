@@ -189,6 +189,38 @@
         font-size: 12px;
       }
 
+      .google-maps-btn {
+        background: #4285f4;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+        cursor: pointer;
+        margin-top: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+        min-height: 28px;
+      }
+
+      .google-maps-btn:hover {
+        background: #3367d6;
+        text-decoration: none;
+        color: white;
+      }
+
+      .google-maps-btn:active {
+        background: #2851a3;
+      }
+
+      .google-maps-icon {
+        font-size: 12px;
+      }
+
       .controls {
         position: absolute;
         top: 20px;
@@ -408,6 +440,17 @@
 
         .popup-activities {
           font-size: 11px;
+        }
+
+        .google-maps-btn {
+          padding: 8px 12px;
+          font-size: 12px;
+          min-height: 32px;
+          margin-top: 6px;
+        }
+
+        .google-maps-icon {
+          font-size: 13px;
         }
       }
 
@@ -1019,12 +1062,20 @@
                 ? location.activities.join("<br>")
                 : "Visit location";
 
+            const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+              location.name
+            )}&center=${location.lat},${location.lng}`;
+
             const popupContent = `
                         <div class="popup-content">
                             <div class="popup-title">${
                               location.name || "Location"
                             }</div>
                             <div class="popup-activities">${activitiesText}</div>
+                            <a href="${googleMapsUrl}" target="_blank" class="google-maps-btn" onclick="event.stopPropagation();">
+                                <span class="google-maps-icon">📍</span>
+                                Open in Google Maps
+                            </a>
                         </div>
                     `;
 
@@ -1107,10 +1158,18 @@
               zIndexOffset: 1000, // Ensure hotels appear above other markers
             }).addTo(map);
 
+            const hotelGoogleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+              day.hotel
+            )}&center=${hotelLoc.lat},${hotelLoc.lng}`;
+
             const hotelPopupContent = `
               <div class="popup-content">
                 <div class="popup-title">🏨 ${day.hotel}</div>
                 <div class="popup-activities">Day ${day.day} accommodation</div>
+                <a href="${hotelGoogleMapsUrl}" target="_blank" class="google-maps-btn" onclick="event.stopPropagation();">
+                    <span class="google-maps-icon">📍</span>
+                    Open in Google Maps
+                </a>
               </div>
             `;
 
