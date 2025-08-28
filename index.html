@@ -1,0 +1,657 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slovenia 2025 Interactive Itinerary</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            background: white;
+            margin: 10px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 400px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .day-card {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            border-left: 5px solid;
+        }
+
+        .day-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+        }
+
+        .day-header {
+            padding: 15px 20px 10px;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .day-title {
+            font-weight: bold;
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .day-date {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .locations {
+            padding: 10px 20px 15px;
+        }
+
+        .location {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #495057;
+        }
+
+        .location-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .hotel {
+            background: #f8f9fa;
+            border-left: 3px solid #6c757d;
+            padding: 8px 12px;
+            margin-top: 8px;
+            border-radius: 0 8px 8px 0;
+            font-size: 12px;
+            color: #495057;
+        }
+
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+            min-width: 200px;
+        }
+
+        .legend h3 {
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 8px;
+            border: 2px solid white;
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
+        }
+
+        .active-day {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .popup-content {
+            font-size: 13px;
+            line-height: 1.4;
+            min-width: 150px;
+        }
+
+        .popup-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .popup-activities {
+            color: #495057;
+            font-size: 12px;
+        }
+
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .control-btn {
+            background: white;
+            border: none;
+            padding: 10px 15px;
+            margin-left: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .control-btn:hover {
+            background: #f8f9fa;
+            transform: translateY(-1px);
+        }
+
+        .control-btn.active {
+            background: #007bff;
+            color: white;
+        }
+
+        /* Ensure popups are visible and styled nicely */
+        .leaflet-popup-content-wrapper {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .leaflet-popup-content {
+            margin: 8px 12px;
+        }
+
+        /* Make markers more interactive */
+        .leaflet-interactive {
+            cursor: pointer !important;
+        }
+    </style>
+
+    <script>
+      
+      const files = {
+        
+      }
+    
+
+
+      window.fs = {}
+      window.fs.readFile = (fileName) => {
+        // return array buffer
+        return new Promise((resolve) => {
+          const content = files[fileName]
+          const decoded = atob(content)
+          const arr = new Uint8Array(decoded.length)
+          for (let i = 0; i < decoded.length; i++) {
+            arr[i] = decoded.charCodeAt(i)
+          }
+          resolve(arr)
+        })
+      }
+    </script>
+    </head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="header">
+                <h1>🇸🇮 Slovenia 2025</h1>
+                <p>13-Day Adventure • Aug 29 - Sep 10</p>
+            </div>
+            <div id="itinerary"></div>
+        </div>
+        
+        <div class="map-container">
+            <div class="controls">
+                <button class="control-btn active" onclick="showAllDays()">Show All</button>
+                <button class="control-btn" onclick="fitToBounds()">Fit View</button>
+            </div>
+            <div id="map"></div>
+            <div class="legend">
+                <h3>Days Legend</h3>
+                <div id="legend-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Color palette for different days
+        const dayColors = [
+            '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57',
+            '#FF9FF3', '#54A0FF', '#5F27CD', '#00D2D3', '#FF9F43',
+            '#EE5A24', '#0984E3', '#74B9FF'
+        ];
+
+        // Itinerary data (updated with correct Blue Waves Resort location in Krk)
+        const itinerary = [
+            {
+                day: 1,
+                date: "Aug 29 (Fri)",
+                title: "✈️ Arrival",
+                locations: [
+                    { name: "Zagreb Airport", lat: 45.7429, lng: 16.0688, activities: ["Arrive ~12 pm"] },
+                    { name: "Lotrščak Tower", lat: 45.8150, lng: 15.9819, activities: ["Sightseeing"] },
+                    { name: "Tkalčićeva Street", lat: 45.8144, lng: 15.9798, activities: ["Café visit"] },
+                    { name: "Plitvice Lakes", lat: 44.8654, lng: 15.5820, activities: ["Drive (~2.5 hrs)"] }
+                ],
+                hotel: "Villa Mukinja, Plitvice"
+            },
+            {
+                day: 2,
+                date: "Aug 30 (Sat)",
+                title: "💦 Waterfall Hike! Plitvice → Lake Bled",
+                locations: [
+                    { name: "Plitvice Route C", lat: 44.8654, lng: 15.5820, activities: ["Hiking trail"] },
+                    { name: "Lake Bled", lat: 46.3683, lng: 14.0940, activities: ["Drive to Bled"] }
+                ],
+                hotel: "Hotel Hom at Vintgar"
+            },
+            {
+                day: 3,
+                date: "Aug 31 (Sun)",
+                title: "🚣 Bled",
+                locations: [
+                    { name: "Ojstrica Viewpoint", lat: 46.3647, lng: 14.0758, activities: ["Hike (45 min total)"] },
+                    { name: "Bled Island", lat: 46.3677, lng: 14.1028, activities: ["Island & church visit"] },
+                    { name: "Bled Castle", lat: 46.3717, lng: 14.0990, activities: ["Castle visit"] },
+                    { name: "Vintgar Gorge", lat: 46.3833, lng: 14.0833, activities: ["Loop hike (~1.5 hrs)"] }
+                ],
+                hotel: "Hotel Hom at Vintgar"
+            },
+            {
+                day: 4,
+                date: "Sept 1 (Mon)",
+                title: "🚶 Bohinj",
+                locations: [
+                    { name: "Mostnica Gorge", lat: 46.2833, lng: 13.8500, activities: ["Hike (~2 hrs)"] },
+                    { name: "Lake Bohinj", lat: 46.2833, lng: 13.8333, activities: ["Swimming"] },
+                    { name: "Savica Waterfall", lat: 46.3000, lng: 13.8167, activities: ["Hike (45 min)"] },
+                    { name: "Vogel Cable Car", lat: 46.2667, lng: 13.8333, activities: ["Julian Alps panorama (~1.5–2 hrs)"] }
+                ],
+                hotel: "Rustic House 13 Studor v Bohinju"
+            },
+            {
+                day: 5,
+                date: "Sept 2 (Tue)",
+                title: "⛰️ Start Seven Lakes Loop",
+                locations: [
+                    { name: "Planina Blato", lat: 46.3167, lng: 13.8500, activities: ["Trailhead"] },
+                    { name: "Planina pri Jezeru", lat: 46.3000, lng: 13.8667, activities: ["Hiking waypoint"] },
+                    { name: "Koča pri Triglavskih jezerih", lat: 46.3333, lng: 13.8833, activities: ["Lunch, overnight in hut"] },
+                    { name: "Hribarice Plateau", lat: 46.3400, lng: 13.8900, activities: ["Optional hike"] }
+                ],
+                hotel: "Koča pri Triglavskih jezerih (Mountain Hut)"
+            },
+            {
+                day: 6,
+                date: "Sept 3 (Wed)",
+                title: "⛰️ Finish Seven Lakes",
+                locations: [
+                    { name: "Štapce Pass", lat: 46.3500, lng: 13.9000, activities: ["Hiking waypoint"] },
+                    { name: "Black Lake", lat: 46.3600, lng: 13.9100, activities: ["Seven Lakes trail"] },
+                    { name: "Planina Viševnik", lat: 46.3700, lng: 13.9200, activities: ["Hiking waypoint"] },
+                    { name: "Vršič Pass", lat: 46.4333, lng: 13.7500, activities: ["Drive (~2 hrs)", "Summit viewpoint"] },
+                    { name: "Lake Jasna", lat: 46.4833, lng: 13.7333, activities: ["Scenic stop"] },
+                    { name: "Russian Chapel", lat: 46.4167, lng: 13.7667, activities: ["Historical site"] }
+                ],
+                hotel: "Vivo Bovec"
+            },
+            {
+                day: 7,
+                date: "Sept 4 (Thu)",
+                title: "🌊 Soča River Fun",
+                locations: [
+                    { name: "Bovec", lat: 46.3383, lng: 13.5536, activities: ["Rafting (8:15 - 3 hrs)"] },
+                    { name: "Virje Waterfall", lat: 46.3167, lng: 13.5833, activities: ["Quick stop (10 min drive)"] },
+                    { name: "Great Soča Gorge", lat: 46.3000, lng: 13.6000, activities: ["30 min wander (15 min drive)"] },
+                    { name: "Boka Waterfall", lat: 46.2833, lng: 13.6167, activities: ["Optional stop (10 min drive)"] },
+                    { name: "Kozjak Waterfall", lat: 46.2500, lng: 13.6500, activities: ["1–1.5 hr hike (25 min drive)"] },
+                    { name: "Napoleon Bridge", lat: 46.3383, lng: 13.5536, activities: ["Quick stop in town"] }
+                ],
+                hotel: "Odisej House Tolmin"
+            },
+            {
+                day: 8,
+                date: "Sept 5 (Fri)",
+                title: "🏰 Tolmin, Postojna & Predjama → Ljubljana",
+                locations: [
+                    { name: "Tolmin Gorge", lat: 46.1833, lng: 13.7333, activities: ["Morning hike (1–1.5 hrs)"] },
+                    { name: "Postojna Cave", lat: 45.7833, lng: 14.2000, activities: ["Cave tour (1.5–2 hrs)"] },
+                    { name: "Predjama Castle", lat: 45.8147, lng: 14.1275, activities: ["Castle visit (1–1.5 hrs)"] },
+                    { name: "Ljubljana", lat: 46.0569, lng: 14.5058, activities: ["Arrive in capital"] }
+                ],
+                hotel: "Four Points by Sheraton Ljubljana Mons"
+            },
+            {
+                day: 9,
+                date: "Sept 6 (Sat)",
+                title: "👨‍👩‍👧‍👦 Ljubljana - Family Day",
+                locations: [
+                    { name: "Ljubljana", lat: 46.0569, lng: 14.5058, activities: ["Meet Tanja's family"] }
+                ],
+                hotel: "Four Points by Sheraton Ljubljana Mons"
+            },
+            {
+                day: 10,
+                date: "Sept 7 (Sun)",
+                title: "🏛️ Ljubljana Exploration",
+                locations: [
+                    { name: "Ljubljana Castle", lat: 46.0492, lng: 14.5073, activities: ["Castle & funicular"] },
+                    { name: "Central Market", lat: 46.0514, lng: 14.5061, activities: ["Market visit"] },
+                    { name: "Tivoli Park", lat: 46.0556, lng: 14.4931, activities: ["Park walk"] },
+                    { name: "Prešeren Square", lat: 46.0514, lng: 14.5047, activities: ["City center"] },
+                    { name: "Dragon Bridge", lat: 46.0522, lng: 14.5089, activities: ["Iconic bridge"] }
+                ],
+                hotel: "Four Points by Sheraton Ljubljana Mons"
+            },
+            {
+                day: 11,
+                date: "Sept 8 (Mon)",
+                title: "🕳️ Ljubljana → Krk",
+                locations: [
+                    { name: "Škocjan Caves", lat: 45.6667, lng: 14.0000, activities: ["Cave tour (2 hrs)"] },
+                    { name: "Krk", lat: 45.0278, lng: 14.5722, activities: ["Drive to Croatian island resort"] }
+                ],
+                hotel: "Blue Waves Resort, Krk"
+            },
+            {
+                day: 12,
+                date: "Sept 9 (Tue)",
+                title: "🏖️ Resort Relaxation",
+                locations: [
+                    { name: "Krk", lat: 45.0278, lng: 14.5722, activities: ["Resort time", "Beach relaxation"] }
+                ],
+                hotel: "Blue Waves Resort, Krk"
+            },
+            {
+                day: 13,
+                date: "Sept 10 (Wed)",
+                title: "✈️ Departure",
+                locations: [
+                    { name: "Zagreb Airport", lat: 45.7429, lng: 16.0688, activities: ["Early drive", "Return car & check in"] }
+                ],
+                hotel: "Flight home"
+            }
+        ];
+
+        // Initialize map
+        const map = L.map('map').setView([45.8, 14.5], 7);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Store markers and circles for each day
+        const dayMarkers = {};
+        const dayCircles = {};
+        let allMarkers = [];
+        let currentFocusedDay = null;
+
+        // Create itinerary sidebar and map markers
+        function createItinerary() {
+            const itineraryContainer = document.getElementById('itinerary');
+            const legendContainer = document.getElementById('legend-content');
+            
+            itinerary.forEach((day, index) => {
+                const color = dayColors[index % dayColors.length];
+                
+                // Create day card
+                const dayCard = document.createElement('div');
+                dayCard.className = 'day-card';
+                dayCard.style.borderLeftColor = color;
+                dayCard.onclick = () => focusDay(day.day);
+                
+                dayCard.innerHTML = `
+                    <div class="day-header">
+                        <div class="day-title">${day.title}</div>
+                        <div class="day-date">Day ${day.day} - ${day.date}</div>
+                    </div>
+                    <div class="locations">
+                        ${day.locations.map(loc => `
+                            <div class="location">
+                                <div class="location-icon" style="background-color: ${color}"></div>
+                                <div>
+                                    <strong>${loc.name}</strong><br>
+                                    <small>${loc.activities.join(', ')}</small>
+                                </div>
+                            </div>
+                        `).join('')}
+                        <div class="hotel">🏨 ${day.hotel}</div>
+                    </div>
+                `;
+                
+                itineraryContainer.appendChild(dayCard);
+                
+                // Create legend item
+                const legendItem = document.createElement('div');
+                legendItem.className = 'legend-item';
+                legendItem.innerHTML = `
+                    <div class="legend-color" style="background-color: ${color}"></div>
+                    <span>Day ${day.day} - ${day.date.split(' ')[0]}</span>
+                `;
+                legendContainer.appendChild(legendItem);
+                
+                // Create map markers and circle for this day
+                const dayMarkersList = [];
+                const latlngs = [];
+                
+                day.locations.forEach((location, locationIndex) => {
+                    // Create marker with unique properties
+                    const marker = L.circleMarker([location.lat, location.lng], {
+                        color: 'white',
+                        fillColor: color,
+                        fillOpacity: 0.8,
+                        weight: 2,
+                        radius: 9,
+                        interactive: true // Ensure marker is interactive
+                    }).addTo(map);
+                    
+                    // Create popup content - ensure it's not empty
+                    const activitiesText = location.activities && location.activities.length > 0 
+                        ? location.activities.join('<br>') 
+                        : 'Visit location';
+                    
+                    const popupContent = `
+                        <div class="popup-content">
+                            <div class="popup-title">${location.name || 'Location'}</div>
+                            <div class="popup-activities">${activitiesText}</div>
+                        </div>
+                    `;
+                    
+                    // Bind popup with options
+                    marker.bindPopup(popupContent, {
+                        closeButton: true,
+                        autoClose: false,
+                        closeOnClick: false,
+                        className: 'custom-popup'
+                    });
+                    
+                    // Add event listeners for hover and click
+                    marker.on('mouseover', function(e) {
+                        this.openPopup();
+                    });
+                    
+                    marker.on('click', function(e) {
+                        this.openPopup();
+                        e.originalEvent.stopPropagation();
+                    });
+                    
+                    // Optional: close on mouseout with delay
+                    marker.on('mouseout', function(e) {
+                        const popup = this;
+                        setTimeout(() => {
+                            if (!popup.isPopupOpen()) return;
+                            const popupElement = popup.getPopup()._container;
+                            if (popupElement && !popupElement.matches(':hover')) {
+                                popup.closePopup();
+                            }
+                        }, 500);
+                    });
+                    
+                    // Store marker
+                    dayMarkersList.push(marker);
+                    allMarkers.push(marker);
+                    latlngs.push([location.lat, location.lng]);
+                    
+                    // Debug log to ensure all markers are created
+                    console.log(`Created marker for Day ${day.day}: ${location.name}`);
+                });
+                
+                // Create circle around all locations for this day
+                if (latlngs.length > 1) {
+                    const bounds = L.latLngBounds(latlngs);
+                    const center = bounds.getCenter();
+                    const maxDistance = Math.max(
+                        map.distance(center, bounds.getNorthEast()),
+                        map.distance(center, bounds.getSouthWest())
+                    );
+                    
+                    const circle = L.circle(center, {
+                        color: color,
+                        fillColor: color,
+                        fillOpacity: 0.1,
+                        weight: 2,
+                        radius: maxDistance * 1.2,
+                        interactive: false // Circles shouldn't interfere with marker clicks
+                    }).addTo(map);
+                    
+                    dayCircles[day.day] = circle;
+                }
+                
+                dayMarkers[day.day] = dayMarkersList;
+            });
+            
+            // Final debug log
+            console.log(`Total markers created: ${allMarkers.length}`);
+            console.log('All markers:', allMarkers);
+        }
+
+        // Focus on a specific day (only when clicking sidebar cards)
+        function focusDay(dayNumber) {
+            currentFocusedDay = dayNumber;
+            
+            // Remove active class from all day cards
+            document.querySelectorAll('.day-card').forEach(card => {
+                card.classList.remove('active-day');
+            });
+            
+            // Add active class to clicked day card
+            document.querySelectorAll('.day-card')[dayNumber - 1].classList.add('active-day');
+            
+            // Dim all markers and circles
+            Object.values(dayMarkers).flat().forEach(marker => marker.setStyle({opacity: 0.3, fillOpacity: 0.3}));
+            Object.values(dayCircles).forEach(circle => circle.setStyle({opacity: 0.2, fillOpacity: 0.05}));
+            
+            // Highlight only selected day markers and circle
+            if (dayMarkers[dayNumber]) {
+                dayMarkers[dayNumber].forEach(marker => marker.setStyle({opacity: 1, fillOpacity: 0.8}));
+            }
+            if (dayCircles[dayNumber]) {
+                dayCircles[dayNumber].setStyle({opacity: 0.8, fillOpacity: 0.2});
+            }
+            
+            // Fit map to day's locations
+            if (dayMarkers[dayNumber] && dayMarkers[dayNumber].length > 0) {
+                const group = new L.featureGroup(dayMarkers[dayNumber]);
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+        }
+
+        // Show all days
+        function showAllDays() {
+            currentFocusedDay = null;
+            
+            // Remove active class from all day cards
+            document.querySelectorAll('.day-card').forEach(card => {
+                card.classList.remove('active-day');
+            });
+            
+            // Show all markers and circles at full opacity
+            Object.values(dayMarkers).flat().forEach(marker => marker.setStyle({opacity: 1, fillOpacity: 0.8}));
+            Object.values(dayCircles).forEach(circle => circle.setStyle({opacity: 0.6, fillOpacity: 0.1}));
+            
+            fitToBounds();
+        }
+
+        // Fit map to show all locations
+        function fitToBounds() {
+            if (allMarkers.length > 0) {
+                const group = new L.featureGroup(allMarkers);
+                map.fitBounds(group.getBounds().pad(0.05));
+            }
+        }
+
+        // Initialize the app
+        createItinerary();
+        
+        // Set initial view
+        setTimeout(() => {
+            fitToBounds();
+        }, 100);
+    </script>
+</body>
+</html>
