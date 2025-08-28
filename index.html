@@ -1290,6 +1290,33 @@
 
       // Initialize mobile functionality
       initializeMobile();
+
+      // Add click-away functionality to close popups
+      map.on("click", function (e) {
+        // Close all open popups when clicking on the map (but not on markers)
+        allMarkers.forEach((marker) => {
+          if (marker.isPopupOpen()) {
+            marker.closePopup();
+          }
+        });
+        hotelMarkers.forEach((marker) => {
+          if (marker.isPopupOpen()) {
+            marker.closePopup();
+          }
+        });
+      });
+
+      // Prevent popup from closing when clicking on the popup itself
+      map.on("popupopen", function (e) {
+        const popup = e.popup;
+        const popupElement = popup._container;
+
+        if (popupElement) {
+          popupElement.addEventListener("click", function (event) {
+            event.stopPropagation();
+          });
+        }
+      });
     </script>
   </body>
 </html>
