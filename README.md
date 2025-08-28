@@ -5,9 +5,11 @@ An interactive itinerary map for a 13-day adventure through Slovenia, featuring 
 ## 🗺️ Features
 
 - **Interactive Map**: Click on any day in the sidebar to focus on specific locations
+- **Mobile-Friendly**: Responsive design with toggle navigation for mobile devices
 - **Detailed Itinerary**: 13 days of carefully planned activities and accommodations
 - **Visual Timeline**: Color-coded days with location markers and activity details
-- **Responsive Design**: Works on desktop and mobile devices
+- **Touch-Optimized**: Enhanced mobile experience with larger touch targets
+- **Adaptive Layout**: Optimized for desktop, tablet, and mobile screens
 
 ## 📍 Trip Highlights
 
@@ -20,7 +22,14 @@ An interactive itinerary map for a 13-day adventure through Slovenia, featuring 
 
 ## 🚀 View the Map
 
-Visit the live interactive map: [Slovenia Adventure Map](https://yourusername.github.io/slovenia-adventure-map)
+Visit the live interactive map: [Slovenia Adventure Map](https://lizlozin.github.io/slovenia-adventure-map)
+
+### 📱 Mobile Usage
+
+- Tap the "📋 Itinerary" button to view the day-by-day schedule
+- Select any day to focus on specific locations
+- The sidebar automatically closes after selection for better map viewing
+- All features work seamlessly on mobile devices
 
 ## 📅 Trip Details
 
