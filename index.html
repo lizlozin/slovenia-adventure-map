@@ -233,71 +233,70 @@
         cursor: pointer !important;
       }
 
-      /* Mobile Toggle Button */
-      .mobile-toggle {
+      /* Legend Toggle Button for Mobile */
+      .legend-toggle {
         display: none;
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 2000;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 1001;
         background: #007bff;
         color: white;
         border: none;
-        padding: 12px 16px;
-        border-radius: 8px;
-        font-size: 14px;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 12px;
         font-weight: bold;
         cursor: pointer;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         transition: all 0.3s ease;
       }
 
-      .mobile-toggle:hover {
+      .legend-toggle:hover {
         background: #0056b3;
-        transform: translateY(-2px);
+        transform: translateY(-1px);
       }
 
-      .mobile-toggle.active {
-        background: #dc3545;
+      .legend-toggle.active {
+        background: #28a745;
       }
 
       /* Mobile Responsive Styles */
       @media (max-width: 768px) {
         body {
-          overflow: auto;
+          overflow: hidden;
         }
 
         .container {
           flex-direction: column;
-          height: auto;
-          min-height: 100vh;
+          height: 100vh;
           margin: 0;
           border-radius: 0;
         }
 
-        .sidebar {
-          width: 100%;
-          max-height: 50vh;
-          position: relative;
-          border-right: none;
-          border-bottom: 1px solid #e9ecef;
-          padding: 15px;
-          transform: translateY(-100%);
-          transition: transform 0.3s ease;
-        }
-
-        .sidebar.mobile-open {
-          transform: translateY(0);
-        }
-
         .map-container {
           height: 50vh;
-          min-height: 400px;
+          min-height: 300px;
           flex: none;
+          order: 1;
+        }
+
+        .sidebar {
+          width: 100%;
+          height: 50vh;
+          position: relative;
+          border-right: none;
+          border-top: 1px solid #e9ecef;
+          border-bottom: none;
+          padding: 15px;
+          order: 2;
+          transform: none;
+          transition: none;
+          overflow-y: auto;
         }
 
         .mobile-toggle {
-          display: block;
+          display: none;
         }
 
         .header h1 {
@@ -366,6 +365,16 @@
           max-height: 150px;
           padding: 10px;
           min-width: auto;
+          display: none;
+          transition: all 0.3s ease;
+        }
+
+        .legend.mobile-visible {
+          display: block;
+        }
+
+        .legend-toggle {
+          display: block;
         }
 
         .legend h3 {
@@ -469,7 +478,6 @@
     </script>
   </head>
   <body>
-    <button class="mobile-toggle" id="mobileToggle">📋 Itinerary</button>
     <div class="container">
       <div class="sidebar" id="sidebar">
         <div class="header">
@@ -480,6 +488,7 @@
       </div>
 
       <div class="map-container">
+        <button class="legend-toggle" id="legendToggle">📍 Legend</button>
         <div class="controls">
           <button class="control-btn active" onclick="showAllDays()">
             Show All
@@ -487,7 +496,7 @@
           <button class="control-btn" onclick="fitToBounds()">Fit View</button>
         </div>
         <div id="map"></div>
-        <div class="legend">
+        <div class="legend" id="legend">
           <h3>Days Legend</h3>
           <div id="legend-content"></div>
         </div>
@@ -1122,67 +1131,55 @@
         fitToBounds();
       }, 100);
 
-      // Mobile functionality
+      // Mobile functionality - simplified since sidebar is always visible on mobile
       function initializeMobile() {
-        const mobileToggle = document.getElementById("mobileToggle");
-        const sidebar = document.getElementById("sidebar");
-        let sidebarOpen = false;
+        const legendToggle = document.getElementById("legendToggle");
+        const legend = document.getElementById("legend");
+        let legendVisible = false;
 
-        mobileToggle.addEventListener("click", function () {
-          sidebarOpen = !sidebarOpen;
+        // Legend toggle functionality for mobile
+        if (legendToggle) {
+          legendToggle.addEventListener("click", function () {
+            legendVisible = !legendVisible;
 
-          if (sidebarOpen) {
-            sidebar.classList.add("mobile-open");
-            mobileToggle.classList.add("active");
-            mobileToggle.textContent = "✕ Close";
-          } else {
-            sidebar.classList.remove("mobile-open");
-            mobileToggle.classList.remove("active");
-            mobileToggle.textContent = "📋 Itinerary";
-          }
-        });
+            if (legendVisible) {
+              legend.classList.add("mobile-visible");
+              legendToggle.classList.add("active");
+              legendToggle.textContent = "✕ Hide";
+            } else {
+              legend.classList.remove("mobile-visible");
+              legendToggle.classList.remove("active");
+              legendToggle.textContent = "📍 Legend";
+            }
+          });
+        }
 
-        // Close sidebar when clicking on map on mobile
-        document.getElementById("map").addEventListener("click", function () {
-          if (window.innerWidth <= 768 && sidebarOpen) {
-            sidebar.classList.remove("mobile-open");
-            mobileToggle.classList.remove("active");
-            mobileToggle.textContent = "📋 Itinerary";
-            sidebarOpen = false;
-          }
-        });
-
-        // Handle window resize
+        // Handle window resize to ensure proper layout
         window.addEventListener("resize", function () {
+          // Trigger map resize when window is resized
+          setTimeout(() => {
+            map.invalidateSize();
+          }, 100);
+
+          // Reset legend visibility on desktop
           if (window.innerWidth > 768) {
-            sidebar.classList.remove("mobile-open");
-            mobileToggle.classList.remove("active");
-            mobileToggle.textContent = "📋 Itinerary";
-            sidebarOpen = false;
+            legend.classList.remove("mobile-visible");
+            legendToggle.classList.remove("active");
+            legendToggle.textContent = "📍 Legend";
+            legendVisible = false;
           }
         });
+
+        // Ensure map resizes properly on mobile
+        if (window.innerWidth <= 768) {
+          setTimeout(() => {
+            map.invalidateSize();
+          }, 100);
+        }
       }
 
       // Initialize mobile functionality
       initializeMobile();
-
-      // Enhanced focus day function for mobile
-      const originalFocusDay = focusDay;
-      focusDay = function (dayNumber) {
-        originalFocusDay(dayNumber);
-
-        // On mobile, close sidebar after selecting a day
-        if (window.innerWidth <= 768) {
-          const sidebar = document.getElementById("sidebar");
-          const mobileToggle = document.getElementById("mobileToggle");
-
-          setTimeout(() => {
-            sidebar.classList.remove("mobile-open");
-            mobileToggle.classList.remove("active");
-            mobileToggle.textContent = "📋 Itinerary";
-          }, 500); // Small delay to see the selection
-        }
-      };
     </script>
   </body>
 </html>
